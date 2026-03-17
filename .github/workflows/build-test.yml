@@ -13,7 +13,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
+  checks:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -30,31 +30,9 @@ jobs:
       - name: Check if dist/index.js needs to be rebuilt
         run: diff <(git status dist/index.js --short) <(echo -n "")
 
-  format-check:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup node 20
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - run: npm ci
-
       - run: npm run format-check
 
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup node 20
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - run: npm ci
+      - run: npm run lint
 
       - run: npm test
 
@@ -86,19 +64,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup node 20
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: 17
           distribution: 'temurin'
-
-      - run: npm ci
-      - run: npm run build
 
       - name: Run setup-android
         uses: ./
@@ -108,23 +78,9 @@ jobs:
 
       - run: sdkmanager --list
 
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup node 20
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - run: npm ci
-
-      - run: npm run lint
-
   CI:
     if: always()
-    needs: [build, format-check, test, runSdkManager, lint]
+    needs: [checks, runSdkManager]
     runs-on: ubuntu-latest
     steps:
       - run: |
