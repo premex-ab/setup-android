@@ -1,9 +1,16 @@
-name: Build & Test
+name: CI
 
 on:
   push:
     paths-ignore:
       - '**.md'
+  pull_request:
+    paths-ignore:
+      - '**.md'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
@@ -60,12 +67,10 @@ jobs:
         os:
           - ubuntu-24.04
           - ubuntu-22.04
-          - ubuntu-20.04
+          - macos-15
           - macos-14
-          - macos-13
-          - macos-12
+          - windows-2025
           - windows-2022
-          - windows-2019
         cmdline-tools-version:
           - 12266719
           - 11479570
@@ -75,6 +80,9 @@ jobs:
           - 9477386
           - 9123335
           - 8512546
+          - 6858069
+          - 6609375
+          - 6200805
     steps:
       - uses: actions/checkout@v4
 
@@ -98,8 +106,6 @@ jobs:
           cmdline-tools-version: ${{ matrix.cmdline-tools-version }}
           log-accepted-android-sdk-licenses: 'false'
 
-      - run: sdkmanager --list_installed
-
       - run: sdkmanager --list
 
   lint:
@@ -115,3 +121,14 @@ jobs:
       - run: npm ci
 
       - run: npm run lint
+
+  CI:
+    if: always()
+    needs: [build, format-check, test, runSdkManager, lint]
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          if [[ "${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') }}" == "true" ]]; then
+            echo "One or more jobs failed or were cancelled"
+            exit 1
+          fi
