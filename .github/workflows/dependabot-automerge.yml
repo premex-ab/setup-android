@@ -42,6 +42,7 @@ jobs:
         if: ${{ github.actor == 'dependabot[bot]' }}
         id: dependabot-metadata
         uses: dependabot/fetch-metadata@v2.5.0
+        continue-on-error: true
         with:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
 
