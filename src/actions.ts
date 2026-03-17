@@ -79,7 +79,8 @@ export async function exec(
         options?.input ? 'pipe' : 'inherit',
         options?.silent ? 'ignore' : 'inherit',
         options?.silent ? 'ignore' : 'inherit'
-      ]
+      ],
+      shell: process.platform === 'win32'
     })
     if (options?.input) {
       child.stdin!.end(options.input)

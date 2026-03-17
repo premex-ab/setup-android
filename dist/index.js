@@ -113,7 +113,8 @@ function exec(command, args, options) {
                     (options === null || options === void 0 ? void 0 : options.input) ? 'pipe' : 'inherit',
                     (options === null || options === void 0 ? void 0 : options.silent) ? 'ignore' : 'inherit',
                     (options === null || options === void 0 ? void 0 : options.silent) ? 'ignore' : 'inherit'
-                ]
+                ],
+                shell: process.platform === 'win32'
             });
             if (options === null || options === void 0 ? void 0 : options.input) {
                 child.stdin.end(options.input);
