@@ -5,6 +5,12 @@ import * as os from 'os'
 
 function getVersionShort(versionLong: string): string {
   switch (versionLong) {
+    case '14742923':
+      return '20.0'
+    case '13114758':
+      return '19.0'
+    case '12700392':
+      return '17.0'
     case '12266719':
       return '16.0'
     case '11479570':
@@ -21,6 +27,12 @@ function getVersionShort(versionLong: string): string {
       return '8.0'
     case '8512546':
       return '7.0'
+    case '8092744':
+      return '6.0'
+    case '7583922':
+      return '5.0'
+    case '7302050':
+      return '4.0'
     case '6858069':
       return '3.0'
     case '6609375':

@@ -3,7 +3,7 @@
 ![Build & Test](https://github.com/android-actions/setup-android/workflows/Build%20&%20Test/badge.svg)
 
 This action sets up the Android SDK tools by:
- - Downloading the SDK commandline tools, if the current version (16.0) is not found in either `$ANDROID_SDK_ROOT` or `$HOME/.android/sdk`.
+ - Downloading the SDK commandline tools, if the current version (20.0) is not found in either `$ANDROID_SDK_ROOT` or `$HOME/.android/sdk`.
  - Accepting the SDK licenses.
  - Installing `tools` and `platform-tools`.
  - Adding `platform-tools` (contains adb) and `cmdline-tools/16.0/bin` (contains sdkmanager) to `$PATH`.
@@ -61,7 +61,7 @@ Additional packages can be installed at a later time by calling sdkmanager manua
 Command line tools are versioned using two variables - short and long.
 Long one is the build number, used in the zip URL, short one is the human friendly version name.
 
-By default, setup-android installs version 12266719 (short version 16.0).
+By default, setup-android installs version 14742923 (short version 20.0).
 
 To install a different version, call setup-android with desired long version as the input parameter `cmdline-tools-version`:
 ```yaml
@@ -74,6 +74,9 @@ To install a different version, call setup-android with desired long version as 
 #### Version table
 | Short version | Long version |
 |---------------| --- |
+| 20.0          | 14742923 |
+| 19.0          | 13114758 |
+| 17.0          | 12700392 |
 | 16.0          | 12266719 |
 | 13.0          | 11479570 |
 | 12.0          | 11076708 |
@@ -82,6 +85,12 @@ To install a different version, call setup-android with desired long version as 
 | 9.0           | 9477386 |
 | 8.0           | 9123335 |
 | 7.0           | 8512546 |
+| 6.0           | 8092744 |
+| 5.0           | 7583922 |
+| 4.0           | 7302050 |
+| 3.0           | 6858069 |
+| 2.1           | 6609375 |
+| 1.0           | 6200805 |
 
 Current cmdline tools version can be found at https://developer.android.com/studio#command-line-tools-only
 
