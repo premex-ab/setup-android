@@ -60,12 +60,10 @@ jobs:
         os:
           - ubuntu-24.04
           - ubuntu-22.04
-          - ubuntu-20.04
+          - macos-15
           - macos-14
-          - macos-13
-          - macos-12
+          - windows-2025
           - windows-2022
-          - windows-2019
         cmdline-tools-version:
           - 12266719
           - 11479570
