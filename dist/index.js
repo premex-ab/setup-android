@@ -222,6 +222,12 @@ function getVersionShort(versionLong) {
             return '8.0';
         case '8512546':
             return '7.0';
+        case '6858069':
+            return '3.0';
+        case '6609375':
+            return '2.1';
+        case '6200805':
+            return '1.0';
         default:
             return versionLong;
     }
@@ -295,7 +301,13 @@ function installSdkManager() {
                 actions.info(`Removing leftovers from ${cmdlineTools}`);
                 fs.rmSync(cmdlineTools, { recursive: true });
             }
-            fs.renameSync(path.join(extractTo, 'cmdline-tools'), cmdlineTools);
+            // v1.0 and v2.1 extract to tools/, v3.0+ extract to cmdline-tools/
+            const extractedCmdlineTools = path.join(extractTo, 'cmdline-tools');
+            const extractedTools = path.join(extractTo, 'tools');
+            const extractedDir = fs.existsSync(extractedCmdlineTools)
+                ? extractedCmdlineTools
+                : extractedTools;
+            fs.renameSync(extractedDir, cmdlineTools);
         }
         // touch $ANDROID_SDK_ROOT/repositories.cfg
         fs.closeSync(fs.openSync(path.join(ANDROID_SDK_ROOT, 'repositories.cfg'), 'w'));
