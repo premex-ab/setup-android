@@ -122,7 +122,7 @@ jobs:
 
       - run: npm run lint
 
-  ci:
+  CI:
     if: always()
     needs: [build, format-check, test, runSdkManager, lint]
     runs-on: ubuntu-latest
