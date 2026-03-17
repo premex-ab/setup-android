@@ -70,17 +70,6 @@ jobs:
           java-version: 17
           distribution: 'temurin'
 
-      - name: Resolve ANDROID_SDK_ROOT
-        id: sdk
-        shell: bash
-        run: echo "root=${ANDROID_SDK_ROOT:-$HOME/.android/sdk}" >> "$GITHUB_OUTPUT"
-
-      - name: Cache cmdline-tools
-        uses: actions/cache@v4
-        with:
-          path: ${{ steps.sdk.outputs.root }}/cmdline-tools
-          key: cmdline-tools-${{ runner.os }}-${{ matrix.cmdline-tools-version }}
-
       - name: Run setup-android
         uses: ./
         with:
