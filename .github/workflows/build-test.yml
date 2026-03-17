@@ -106,8 +106,6 @@ jobs:
           cmdline-tools-version: ${{ matrix.cmdline-tools-version }}
           log-accepted-android-sdk-licenses: 'false'
 
-      - run: sdkmanager --list_installed
-
       - run: sdkmanager --list
 
   lint:
