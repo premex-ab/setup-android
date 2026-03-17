@@ -1,6 +1,4 @@
-import * as core from '@actions/core'
-import * as tc from '@actions/tool-cache'
-import * as exec from '@actions/exec'
+import * as actions from './actions'
 import * as path from 'path'
 import * as fs from 'fs'
 import * as os from 'os'
@@ -28,11 +26,11 @@ function getVersionShort(versionLong: string): string {
   }
 }
 
-const VERSION_LONG = core.getInput('cmdline-tools-version', {
+const VERSION_LONG = actions.getInput('cmdline-tools-version', {
   trimWhitespace: true
 })
 if (VERSION_LONG.includes('/') || VERSION_LONG.includes('\\')) {
-  core.setFailed('Malformed cmdline-tools-version!')
+  actions.setFailed('Malformed cmdline-tools-version!')
   throw new Error('Malformed cmdline-tools-version!')
 }
 const VERSION_SHORT = getVersionShort(VERSION_LONG)
@@ -50,7 +48,7 @@ async function callSdkManager(
   printOutput: Boolean = true
 ): Promise<void> {
   const acceptBuffer = Buffer.from(Array(10).fill('y').join('\n'), 'utf8')
-  await exec.exec(sdkManager, [arg], {
+  await actions.exec(sdkManager, [arg], {
     input: acceptBuffer,
     silent: !printOutput
   })
@@ -85,15 +83,15 @@ async function installSdkManager(): Promise<string> {
       fs.existsSync(latestSdkManagerExe)
     ) {
       const sourceProperties = fs.readFileSync(sourcePropertiesFile)
-      core.info(
+      actions.info(
         `Found preinstalled sdkmanager in ${latestCmdlineTools} with following source.properties:`
       )
-      core.info(sourceProperties.toString())
+      actions.info(sourceProperties.toString())
       if (sourceProperties.includes(`Pkg.Revision=${VERSION_SHORT}`)) {
-        core.info(`Preinstalled sdkmanager has the correct version`)
+        actions.info(`Preinstalled sdkmanager has the correct version`)
         sdkManagerExe = latestSdkManagerExe
       } else {
-        core.info(`Wrong version in preinstalled sdkmanager`)
+        actions.info(`Wrong version in preinstalled sdkmanager`)
       }
     }
   }
@@ -107,19 +105,19 @@ async function installSdkManager(): Promise<string> {
     } else if (process.platform === 'win32') {
       cmdlineToolsURL = COMMANDLINE_TOOLS_WIN_URL
     } else {
-      core.error(`Unsupported platform: ${process.platform}`)
+      actions.error(`Unsupported platform: ${process.platform}`)
       return ''
     }
 
-    core.info(`Downloading commandline tools from ${cmdlineToolsURL}`)
-    const cmdlineToolsZip = await tc.downloadTool(cmdlineToolsURL)
+    actions.info(`Downloading commandline tools from ${cmdlineToolsURL}`)
+    const cmdlineToolsZip = await actions.downloadTool(cmdlineToolsURL)
 
     const extractTo = path.join(ANDROID_SDK_ROOT, 'cmdline-tools')
-    await tc.extractZip(cmdlineToolsZip, extractTo)
+    await actions.extractZip(cmdlineToolsZip, extractTo)
 
     // Make sure we don't have leftover target directory (happens sometimes...)
     if (fs.existsSync(cmdlineTools)) {
-      core.info(`Removing leftovers from ${cmdlineTools}`)
+      actions.info(`Removing leftovers from ${cmdlineTools}`)
       fs.rmSync(cmdlineTools, {recursive: true})
     }
     fs.renameSync(path.join(extractTo, 'cmdline-tools'), cmdlineTools)
@@ -129,7 +127,7 @@ async function installSdkManager(): Promise<string> {
   fs.closeSync(
     fs.openSync(path.join(ANDROID_SDK_ROOT, 'repositories.cfg'), 'w')
   )
-  core.debug(`sdkmanager available at: ${sdkManagerExe}`)
+  actions.debug(`sdkmanager available at: ${sdkManagerExe}`)
   return sdkManagerExe
 }
 
@@ -142,7 +140,7 @@ async function run(): Promise<void> {
       // Error: Could not find or load main class Files
 
       const newSDKLocation = ANDROID_SDK_ROOT.replace(/\s/gi, '-')
-      core.debug(`moving ${ANDROID_SDK_ROOT} to ${newSDKLocation}`)
+      actions.debug(`moving ${ANDROID_SDK_ROOT} to ${newSDKLocation}`)
       fs.mkdirSync(path.dirname(newSDKLocation), {recursive: true})
 
       // intentionally using fs.renameSync,
@@ -154,16 +152,16 @@ async function run(): Promise<void> {
 
   const sdkManagerExe = await installSdkManager()
 
-  if (core.getBooleanInput('accept-android-sdk-licenses')) {
-    core.info('Accepting Android SDK licenses')
+  if (actions.getBooleanInput('accept-android-sdk-licenses')) {
+    actions.info('Accepting Android SDK licenses')
     await callSdkManager(
       sdkManagerExe,
       '--licenses',
-      core.getBooleanInput('log-accepted-android-sdk-licenses')
+      actions.getBooleanInput('log-accepted-android-sdk-licenses')
     )
   }
 
-  const packages = core
+  const packages = actions
     .getInput('packages', {required: false})
     .split(' ')
     .map(function (str) {
@@ -177,14 +175,14 @@ async function run(): Promise<void> {
     await callSdkManager(sdkManagerExe, pkg)
   }
 
-  core.setOutput('ANDROID_COMMANDLINE_TOOLS_VERSION', VERSION_LONG)
-  core.exportVariable('ANDROID_HOME', ANDROID_SDK_ROOT)
-  core.exportVariable('ANDROID_SDK_ROOT', ANDROID_SDK_ROOT)
+  actions.setOutput('ANDROID_COMMANDLINE_TOOLS_VERSION', VERSION_LONG)
+  actions.exportVariable('ANDROID_HOME', ANDROID_SDK_ROOT)
+  actions.exportVariable('ANDROID_SDK_ROOT', ANDROID_SDK_ROOT)
 
-  core.addPath(path.dirname(sdkManagerExe))
-  core.addPath(path.join(ANDROID_SDK_ROOT, 'platform-tools'))
+  actions.addPath(path.dirname(sdkManagerExe))
+  actions.addPath(path.join(ANDROID_SDK_ROOT, 'platform-tools'))
 
-  core.debug('add matchers')
+  actions.debug('add matchers')
   // eslint-disable-next-line no-console
   console.log(`##[add-matcher]${path.join(__dirname, '..', 'matchers.json')}`)
 }
