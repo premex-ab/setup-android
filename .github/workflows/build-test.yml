@@ -4,6 +4,9 @@ on:
   push:
     paths-ignore:
       - '**.md'
+  pull_request:
+    paths-ignore:
+      - '**.md'
 
 jobs:
   build:
@@ -116,3 +119,14 @@ jobs:
       - run: npm ci
 
       - run: npm run lint
+
+  ci:
+    if: always()
+    needs: [build, format-check, test, runSdkManager, lint]
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          if [[ "${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') }}" == "true" ]]; then
+            echo "One or more jobs failed or were cancelled"
+            exit 1
+          fi
