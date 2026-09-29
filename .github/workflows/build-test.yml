@@ -85,6 +85,8 @@ jobs:
         with:
           cmdline-tools-version: ${{ matrix.cmdline-tools-version }}
           log-accepted-android-sdk-licenses: 'false'
+          # The obsolete tools package is absent on clean self-hosted images.
+          packages: platform-tools
 
       - run: sdkmanager --list
 
