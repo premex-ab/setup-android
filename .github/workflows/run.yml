@@ -8,13 +8,13 @@ on:
 
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.runner }}
     strategy:
       matrix:
-        os:
-          - ubuntu-latest
-          - windows-latest
-          - macos-latest
+        runner:
+          - [self-hosted, linux, x64]
+          - [self-hosted, windows, x64]
+          - [self-hosted, macOS, ARM64, tart]
 
     # Disabled, because daveol/SampleApplication is missing
     if: ${{ false }}

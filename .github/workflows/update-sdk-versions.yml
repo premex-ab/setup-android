@@ -7,7 +7,7 @@ on:
 
 jobs:
   update:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, macOS, ARM64, tart]
     steps:
       - uses: actions/create-github-app-token@v2
         id: app-token

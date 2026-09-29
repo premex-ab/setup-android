@@ -26,7 +26,7 @@ permissions:
 
 jobs:
   dependabot:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, macOS, ARM64, tart]
     if: ${{ github.actor == 'dependabot[bot]' || github.actor == 'premex-pot[bot]' }}
     steps:
       # Generate an elevated token via the Premex Pot GitHub App.
